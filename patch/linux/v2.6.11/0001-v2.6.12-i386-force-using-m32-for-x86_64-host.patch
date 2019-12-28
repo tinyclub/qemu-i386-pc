@@ -1,0 +1,27 @@
+From 1b6c91d230d2d46fa1d489a57e3e84f20732301a Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Sun, 29 Dec 2019 03:19:02 +0800
+Subject: [PATCH 1/2] v2.6.12: i386: force using -m32 for x86_64 host
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ arch/i386/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/i386/Makefile b/arch/i386/Makefile
+index 1c36ca3..e639a48 100644
+--- a/arch/i386/Makefile
++++ b/arch/i386/Makefile
+@@ -22,7 +22,8 @@ OBJCOPYFLAGS	:= -O binary -R .note -R .comment -S
+ LDFLAGS_vmlinux :=
+ CHECKFLAGS	+= -D__i386__
+ 
+-CFLAGS += -pipe -msoft-float
++AFLAGS += -m32
++CFLAGS += -pipe -msoft-float -m32
+ 
+ # prevent gcc from keeping the stack 16 byte aligned
+ CFLAGS += $(call cc-option,-mpreferred-stack-boundary=2)
+-- 
+2.7.4
+

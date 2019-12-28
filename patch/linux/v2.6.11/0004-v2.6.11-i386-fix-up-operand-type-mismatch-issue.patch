@@ -1,0 +1,67 @@
+From 8f0f69bfa005e2197786b8351b0718932e9e1729 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Sun, 29 Dec 2019 04:06:34 +0800
+Subject: [PATCH 4/4] v2.6.11: i386: fix up operand type mismatch issue
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ arch/i386/kernel/process.c | 4 ++--
+ arch/i386/kernel/vm86.c    | 4 ++--
+ include/asm-i386/system.h  | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/i386/kernel/process.c b/arch/i386/kernel/process.c
+index 28b0d7b..667924c 100644
+--- a/arch/i386/kernel/process.c
++++ b/arch/i386/kernel/process.c
+@@ -596,8 +596,8 @@ struct task_struct fastcall * __switch_to(struct task_struct *prev_p, struct tas
+ 	 * Save away %fs and %gs. No need to save %es and %ds, as
+ 	 * those are always kernel segments while inside the kernel.
+ 	 */
+-	asm volatile("movl %%fs,%0":"=m" (*(int *)&prev->fs));
+-	asm volatile("movl %%gs,%0":"=m" (*(int *)&prev->gs));
++	asm volatile("mov %%fs,%0":"=m" (prev->fs));
++	asm volatile("mov %%gs,%0":"=m" (prev->gs));
+ 
+ 	/*
+ 	 * Restore %fs and %gs if needed.
+diff --git a/arch/i386/kernel/vm86.c b/arch/i386/kernel/vm86.c
+index 2dd216a..0e7b445 100644
+--- a/arch/i386/kernel/vm86.c
++++ b/arch/i386/kernel/vm86.c
+@@ -309,8 +309,8 @@ static void do_sys_vm86(struct kernel_vm86_struct *info, struct task_struct *tsk
+  */
+ 	info->regs32->eax = 0;
+ 	tsk->thread.saved_esp0 = tsk->thread.esp0;
+-	asm volatile("movl %%fs,%0":"=m" (tsk->thread.saved_fs));
+-	asm volatile("movl %%gs,%0":"=m" (tsk->thread.saved_gs));
++	asm volatile("mov %%fs,%0":"=m" (tsk->thread.saved_fs));
++	asm volatile("mov %%gs,%0":"=m" (tsk->thread.saved_gs));
+ 
+ 	tss = &per_cpu(init_tss, get_cpu());
+ 	tsk->thread.esp0 = (unsigned long) &info->VM86_TSS_ESP0;
+diff --git a/include/asm-i386/system.h b/include/asm-i386/system.h
+index c705fa7..2c11d51 100644
+--- a/include/asm-i386/system.h
++++ b/include/asm-i386/system.h
+@@ -81,7 +81,7 @@ static inline unsigned long _get_base(char * addr)
+ #define loadsegment(seg,value)			\
+ 	asm volatile("\n"			\
+ 		"1:\t"				\
+-		"movl %0,%%" #seg "\n"		\
++		"mov %0,%%" #seg "\n"		\
+ 		"2:\n"				\
+ 		".section .fixup,\"ax\"\n"	\
+ 		"3:\t"				\
+@@ -99,7 +99,7 @@ static inline unsigned long _get_base(char * addr)
+  * Save a segment register away
+  */
+ #define savesegment(seg, value) \
+-	asm volatile("movl %%" #seg ",%0":"=m" (*(int *)&(value)))
++	asm volatile("mov %%" #seg ",%0":"=m" (value))
+ 
+ /*
+  * Clear and set 'TS' bit respectively
+-- 
+2.7.4
+
