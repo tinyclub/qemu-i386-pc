@@ -1,0 +1,80 @@
+From 4d2a552976b727885a22b145ee4be9778f62e726 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Sun, 29 Dec 2019 22:12:46 +0800
+Subject: [PATCH] semaphore.c: asm: fix up section stack depth issue
+
+restore to the .text section immediately at the end of inline asm.
+
+.pushsection/.popsection can also be used here.
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ arch/i386/kernel/semaphore.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/arch/i386/kernel/semaphore.c b/arch/i386/kernel/semaphore.c
+index be61aa8..7f8fe15 100644
+--- a/arch/i386/kernel/semaphore.c
++++ b/arch/i386/kernel/semaphore.c
+@@ -205,7 +205,8 @@ asm(
+ 	"movl %ebp,%esp\n\t"
+ 	"popl %ebp\n\t"
+ #endif
+-	"ret"
++	"ret\n\t"
++".previous"
+ );
+ 
+ asm(
+@@ -226,7 +227,8 @@ asm(
+ 	"movl %ebp,%esp\n\t"
+ 	"popl %ebp\n\t"
+ #endif
+-	"ret"
++	"ret\n\t"
++".previous"
+ );
+ 
+ asm(
+@@ -247,7 +249,8 @@ asm(
+ 	"movl %ebp,%esp\n\t"
+ 	"popl %ebp\n\t"
+ #endif
+-	"ret"
++	"ret\n\t"
++".previous"
+ );
+ 
+ asm(
+@@ -260,7 +263,8 @@ asm(
+ 	"call __up\n\t"
+ 	"popl %ecx\n\t"
+ 	"popl %edx\n\t"
+-	"ret"
++	"ret\n\t"
++".previous"
+ );
+ 
+ /*
+@@ -278,7 +282,8 @@ asm(
+ 	"jne	1b\n\t"
+ 	LOCK "subl	$" RW_LOCK_BIAS_STR ",(%eax)\n\t"
+ 	"jnz	__write_lock_failed\n\t"
+-	"ret"
++	"ret\n\t"
++".previous"
+ );
+ 
+ asm(
+@@ -292,6 +297,7 @@ asm(
+ 	"js	1b\n\t"
+ 	LOCK "decl	(%eax)\n\t"
+ 	"js	__read_lock_failed\n\t"
+-	"ret"
++	"ret\n\t"
++".previous"
+ );
+ #endif
+-- 
+2.7.4
+
