@@ -1,0 +1,26 @@
+From f5c2152c4c6324b96145568bff3618fad9ca322c Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Mon, 30 Dec 2019 16:05:45 +0800
+Subject: [PATCH 2/3] i386/pc: align declare of do_IRQ with its defnition
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ include/asm-x86/irq_32.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/asm-x86/irq_32.h b/include/asm-x86/irq_32.h
+index aca9c96..a6530a5 100644
+--- a/include/asm-x86/irq_32.h
++++ b/include/asm-x86/irq_32.h
+@@ -41,7 +41,7 @@ extern int irqbalance_disable(char *str);
+ extern void fixup_irqs(cpumask_t map);
+ #endif
+ 
+-unsigned int do_IRQ(struct pt_regs *regs);
++fastcall unsigned int do_IRQ(struct pt_regs *regs);
+ void init_IRQ(void);
+ void __init native_init_IRQ(void);
+ 
+-- 
+1.9.1
+

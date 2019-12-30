@@ -1,0 +1,45 @@
+From 3b41b2b74c16e446ec24a612fdf0390f0f179402 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Mon, 30 Dec 2019 16:06:53 +0800
+Subject: [PATCH 3/3] i386/pc: fix up undefined reference to slowpath of mutex
+ lock/unlock
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ kernel/mutex.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/mutex.c b/kernel/mutex.c
+index d7fe50c..cee99cf 100644
+--- a/kernel/mutex.c
++++ b/kernel/mutex.c
+@@ -58,7 +58,7 @@ EXPORT_SYMBOL(__mutex_init);
+  * We also put the fastpath first in the kernel image, to make sure the
+  * branch is predicted by the CPU as default-untaken.
+  */
+-static void fastcall noinline __sched
++static void fastcall noinline __sched __used
+ __mutex_lock_slowpath(atomic_t *lock_count);
+ 
+ /***
+@@ -95,7 +95,7 @@ void inline fastcall __sched mutex_lock(struct mutex *lock)
+ EXPORT_SYMBOL(mutex_lock);
+ #endif
+ 
+-static void fastcall noinline __sched
++static void fastcall noinline __sched __used
+ __mutex_unlock_slowpath(atomic_t *lock_count);
+ 
+ /***
+@@ -260,7 +260,7 @@ __mutex_unlock_common_slowpath(atomic_t *lock_count, int nested)
+ /*
+  * Release the lock, slowpath:
+  */
+-static fastcall noinline void
++static fastcall noinline void __sched
+ __mutex_unlock_slowpath(atomic_t *lock_count)
+ {
+ 	__mutex_unlock_common_slowpath(lock_count, 1);
+-- 
+1.9.1
+
