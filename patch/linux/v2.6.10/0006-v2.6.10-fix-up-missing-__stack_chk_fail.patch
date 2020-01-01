@@ -1,0 +1,27 @@
+From ece20458319e6976b65e4ecc82ca1cae150b0c61 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Thu, 2 Jan 2020 01:40:46 +0800
+Subject: [PATCH 6/7] v2.6.10: fix up missing __stack_chk_fail
+
+disable the default -fstack-protector
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ arch/i386/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/i386/Makefile b/arch/i386/Makefile
+index 8be151e..ad28f9b 100644
+--- a/arch/i386/Makefile
++++ b/arch/i386/Makefile
+@@ -24,6 +24,7 @@ CFLAGS += -pipe -msoft-float
+ 
+ # prevent gcc from keeping the stack 16 byte aligned
+ CFLAGS += $(call cc-option,-mpreferred-stack-boundary=2)
++CFLAGS += -fno-stack-protector
+ 
+ align := $(cc-option-align)
+ cflags-$(CONFIG_M386)		+= -march=i386
+-- 
+2.7.4
+

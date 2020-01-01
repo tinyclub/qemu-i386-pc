@@ -1,0 +1,37 @@
+From b36d033180146779b21ee15567ffdc1219b5520b Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Sun, 29 Dec 2019 04:05:15 +0800
+Subject: [PATCH 3/4] v2.6.11: syscall: fix up compiler options
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+---
+ arch/i386/kernel/Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/i386/kernel/Makefile b/arch/i386/kernel/Makefile
+index 711a524..f4630a5 100644
+--- a/arch/i386/kernel/Makefile
++++ b/arch/i386/kernel/Makefile
+@@ -49,9 +49,9 @@ quiet_cmd_syscall = SYSCALL $@
+       cmd_syscall = $(CC) -nostdlib $(SYSCFLAGS_$(@F)) \
+ 		          -Wl,-T,$(filter-out FORCE,$^) -o $@
+ 
+-export CPPFLAGS_vsyscall.lds += -P -C -U$(ARCH)
++export CPPFLAGS_vsyscall.lds += -m32 -P -C -U$(ARCH)
+ 
+-vsyscall-flags = -shared -s -Wl,-soname=linux-gate.so.1
++vsyscall-flags = -m32 -shared -s -Wl,-soname=linux-gate.so.1
+ SYSCFLAGS_vsyscall-sysenter.so	= $(vsyscall-flags)
+ SYSCFLAGS_vsyscall-int80.so	= $(vsyscall-flags)
+ 
+@@ -66,6 +66,6 @@ extra-y += vsyscall-syms.o
+ $(obj)/built-in.o: $(obj)/vsyscall-syms.o
+ $(obj)/built-in.o: ld_flags += -R $(obj)/vsyscall-syms.o
+ 
+-SYSCFLAGS_vsyscall-syms.o = -r
++SYSCFLAGS_vsyscall-syms.o = -m32 -r
+ $(obj)/vsyscall-syms.o: $(src)/vsyscall.lds $(obj)/vsyscall-sysenter.o FORCE
+ 	$(call if_changed,syscall)
+-- 
+2.7.4
+
