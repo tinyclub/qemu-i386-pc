@@ -1,0 +1,25 @@
+From 1978f1c18ab9c99bcd5f7d8d5e5197b607d4af2d Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <falcon@tinylab.org>
+Date: Sun, 13 Sep 2020 12:16:20 +0800
+Subject: [PATCH] dvb: bc2c: Fix up obj build target
+
+Signed-off-by: Wu Zhangjin <falcon@tinylab.org>
+---
+ drivers/media/dvb/b2c2/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/dvb/b2c2/Makefile b/drivers/media/dvb/b2c2/Makefile
+index 9fb1247..6db5952 100644
+--- a/drivers/media/dvb/b2c2/Makefile
++++ b/drivers/media/dvb/b2c2/Makefile
+@@ -1,6 +1,6 @@
+ obj-b2c2-usb = b2c2-usb-core.o b2c2-common.o
+ 
+ obj-$(CONFIG_DVB_B2C2_SKYSTAR) += skystar2.o
+-obj-$(CONFIG_DVB_B2C2_USB) + = b2c2-usb.o
++obj-$(CONFIG_DVB_B2C2_USB) += b2c2-usb.o
+ 
+ EXTRA_CFLAGS = -Idrivers/media/dvb/dvb-core/ -Idrivers/media/dvb/frontends/
+-- 
+2.7.4
+
